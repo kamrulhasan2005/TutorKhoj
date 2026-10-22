@@ -1,0 +1,1511 @@
+# MASTER PROMPT: Build a Complete Teacher Finding & Tuition Marketplace Website
+
+## 1. YOUR ROLE AND MISSION
+
+Act as a senior full-stack software engineer, UI/UX designer, database architect, security engineer, QA tester, and deployment specialist.
+
+Build a complete, secure, modern, responsive web application called **Teacher Finding Platform**. The platform will connect students and guardians with teachers in Bangladesh.
+
+This must be a real, functional tuition marketplace, not just a static design, landing page, or frontend prototype.
+
+The platform must support:
+
+- Student registration and profile management.
+- Teacher registration and profile management.
+- Secure authentication and role-based access.
+- Tuition requirement posts and teacher availability posts.
+- Admin approval for public posts.
+- Teacher searching, filtering, and matching.
+- Private messaging and price negotiation.
+- Booking requests and final Admin confirmation.
+- Configurable Student and Teacher commissions.
+- Cancellation handling and approved replacement tuition commission waivers.
+- Teacher ratings and reviews.
+- Payment records and proof verification.
+- Complaints, moderation, notifications, and reporting.
+- An AI-powered Admin assistant that can interpret instructions, preview proposed changes, and execute authorized changes only after explicit Admin confirmation.
+- A secure database, tests, documentation, and deployment through GitHub and Netlify.
+
+**Important:** First inspect the existing project and continue from its current state. Do not delete, replace, or rewrite working code unnecessarily. If the project is empty, create the application from scratch using the recommended architecture below.
+
+Do not stop after generating a plan or mockup. Implement and test the application in phases, using the available tools and the existing project environment.
+
+---
+
+## 2. INITIAL PROJECT AUDIT
+
+Before changing files:
+
+1. Inspect the entire project structure.
+2. Identify the framework, language, dependencies, routing system, styling system, and current application features.
+3. Identify any existing Supabase, authentication, database, GitHub, or Netlify configuration.
+4. Check which features already work, which are incomplete, and which are missing.
+5. Check whether credentials or environment variables are missing.
+6. Provide a concise audit report.
+7. Create or use version control before making risky changes.
+8. Preserve existing working functionality and compatible design decisions.
+
+Then create a practical implementation checklist and proceed with the work.
+
+Use the existing framework when reasonable. If there is no established framework, prefer:
+
+- React.
+- TypeScript.
+- Vite.
+- A consistent, accessible styling system.
+- Supabase for PostgreSQL, authentication, storage, and appropriate server-side functionality.
+- GitHub for source control.
+- Netlify for website hosting and deployment.
+
+Do not migrate frameworks without a strong technical reason.
+
+---
+
+## 3. CORE PRODUCT REQUIREMENTS
+
+The application should have three distinct roles:
+
+1. Student or Guardian.
+2. Teacher.
+3. Admin.
+
+A Student and a Teacher may use the same underlying account system, but their permissions, profile sections, dashboards, and available actions must be appropriately separated.
+
+The interface should be easy to understand for users with limited technical knowledge.
+
+Use Bangladesh as the primary market. Display prices in Bangladeshi Taka (BDT/৳) and use the Asia/Dhaka timezone for dates, times, booking windows, and scheduled operations.
+
+Support both Bangla and English interfaces. Users should be able to switch languages, with English as a sensible initial development default. All important navigation, buttons, messages, validation errors, notifications, and status labels must be translatable.
+
+Do not rely on unverified translations, hard-coded dummy records, or misleading statistics in production.
+
+---
+
+## 4. DESIGN AND USER EXPERIENCE
+
+Create a professional education marketplace design that looks trustworthy, modern, and welcoming.
+
+Design requirements:
+
+- Responsive layout for mobile, tablet, laptop, and desktop.
+- Clean typography, consistent spacing, readable forms, and accessible color contrast.
+- Clear navigation and role-specific dashboards.
+- Attractive cards for teachers, tuition posts, booking records, and reviews.
+- Useful search and filter controls.
+- Confirmation dialogs for important actions.
+- Clear success, loading, empty, error, and permission-denied states.
+- Useful validation messages that explain how to correct an error.
+- Skeleton loaders where appropriate.
+- Proper mobile navigation and accessible interactive components.
+- A consistent icon system.
+- Accessible keyboard navigation and form labels.
+- Avoid unnecessary animations and heavy assets that make the application slow.
+
+Create the visual design of a real education business, not a generic unmodified dashboard template.
+
+Make sure all important buttons actually work. Do not leave fake buttons, dead links, or decorative controls that appear functional but do nothing.
+
+---
+
+## 5. AUTHENTICATION AND ACCOUNT SECURITY
+
+Implement a secure authentication system.
+
+Required features:
+
+- Google sign-in using a properly configured authentication provider.
+- Email and password authentication where supported.
+- Email verification where appropriate.
+- Forgot-password and email password-reset workflow.
+- Secure logout.
+- Session persistence and session expiration handling.
+- Account status handling, including suspended or blocked accounts.
+- Appropriate login and authorization error messages.
+
+### Role selection
+
+The first-time user experience should let a visitor choose whether they want to continue as a Student or a Teacher.
+
+This choice is a registration preference, NOT proof of authorization.
+
+A user must never become an Admin simply by selecting "Admin" in a form, changing browser storage, modifying client-side JavaScript, or submitting a crafted API request.
+
+Admin access must be granted through a trusted, server-side administrative process.
+
+Use secure role-based authorization on the server and at the database level. Do not depend on hiding frontend components as the security mechanism.
+
+If an initial Admin account must be created manually, document a safe bootstrap process. Do not automatically grant Admin privileges to an ordinary public registrant.
+
+---
+
+## 6. STUDENT PROFILE
+
+Create a dedicated Student profile page.
+
+Required fields:
+
+- Full name.
+- Profile photo.
+- Class or education level.
+- Curriculum/version/medium, such as Bangla Medium, English Version, English Medium, Madrasa, or another appropriate option.
+- Division.
+- District.
+- Thana or Upazila.
+- Area or address, where appropriate.
+- Contact phone number.
+- Preferred subjects.
+- Preferred learning mode: in-person, online, or both.
+- Optional learning preferences and additional information.
+
+Allow the Student to view, edit, and save their profile.
+
+Use dropdowns, autocomplete, and suggested options to reduce typing. Validate all values both in the frontend and backend.
+
+### Bangladesh location hierarchy
+
+Support a cascading location selector:
+
+Division → District → Thana/Upazila.
+
+The available districts must depend on the selected division. The available Thana/Upazila values must depend on the selected district.
+
+Use a maintained dataset or an authoritative location source where possible. Include a documented process for updating the dataset. Do not fabricate administrative locations.
+
+Allow an optional area/address field without requiring users to expose their exact home address publicly.
+
+### Profile photo storage
+
+- Compress photos in the browser when suitable.
+- Resize profile images to approximately 400 × 400 pixels.
+- Prefer WebP where browser and platform support allow.
+- Target small images, ideally around 50–100 KB where quality permits.
+- Enforce file type and size limits.
+- Store images in object storage, not as Base64 blobs inside database rows.
+- Store only the required storage path or reference in the database.
+- Use appropriate private/public access rules.
+
+Provide safe defaults for users who do not upload a photo.
+
+---
+
+## 7. TEACHER PROFILE
+
+Create a comprehensive Teacher profile.
+
+Fields should include:
+
+- Full name.
+- Profile photo.
+- School, college, university, or other educational institution.
+- Educational qualifications.
+- Current education level, where relevant.
+- Teaching experience.
+- Subjects taught.
+- Classes or grades taught.
+- Curriculum/version/medium supported.
+- Preferred tuition location.
+- Division, district, and Thana/Upazila.
+- Area or travel preferences.
+- Online/in-person teaching options.
+- Availability and preferred schedule.
+- Expected fee or fee range.
+- Teaching language.
+- Short biography.
+- Optional achievements, qualifications, and supporting documents.
+- Verification status.
+- Aggregate rating and review count.
+
+Allow Teachers to edit their own profiles.
+
+Public profiles must show only information permitted for public display. Do not reveal private phone numbers, private addresses, identity documents, or payment details through public profile queries.
+
+### Teacher verification
+
+Provide an optional verification process using Admin-reviewed evidence.
+
+The system should distinguish between:
+
+- Unverified.
+- Verification pending.
+- Verified.
+- Verification rejected.
+- Verification suspended or revoked.
+
+Only an authorized Admin can approve or revoke verification.
+
+A verification badge must reflect a real database status. Never display a fake verified badge.
+
+---
+
+## 8. PROFILE DATA AND POST AUTO-FILL
+
+Implement profile data and post data as separate records.
+
+This requirement is critical.
+
+### Student creates a tuition post
+
+At the beginning of the post-creation process, show two choices:
+
+**Option A: For Myself**
+
+- Load the Student's saved profile.
+- Automatically populate the relevant form values.
+- Let the Student edit the values for this particular tuition post.
+- Save the post using its own data snapshot.
+- Do not modify the saved Student profile when post fields are edited.
+
+**Option B: For Someone Else**
+
+- Show a new form for the other Student or person.
+- Do not overwrite the logged-in user's profile.
+- Save the entered details only in the appropriate post record, subject to privacy rules.
+
+The saved profile should be the starting point for auto-fill, not a permanently linked collection of editable fields that silently changes when a post is edited.
+
+When a Student changes their saved profile later, existing posts should remain unchanged unless the Student explicitly edits those posts.
+
+Provide a preview before publishing or submitting the post.
+
+Apply the same separation principle to Teacher profiles and Teacher availability posts.
+
+---
+
+## 9. TUITION POSTS
+
+Support at least two post categories:
+
+1. Student tuition requirement.
+2. Teacher availability or tuition offer.
+
+### Student tuition requirement fields
+
+- Post title.
+- Student name or permitted display name.
+- Whether the tuition is for the logged-in user or someone else.
+- Class/education level.
+- Medium/curriculum.
+- Required subjects.
+- Preferred teacher characteristics, where appropriate.
+- Location.
+- Preferred learning mode.
+- Preferred days and times.
+- Expected budget or fee range.
+- Start date or preferred start period.
+- Additional requirements.
+- Optional private notes.
+- Status and timestamps.
+
+### Teacher availability post fields
+
+- Teacher profile reference.
+- Classes they can teach.
+- Subjects they can teach.
+- Curriculum/medium.
+- Preferred locations.
+- Online/in-person availability.
+- Days and times available.
+- Fee range.
+- Experience or other relevant details.
+- Additional information.
+- Status and timestamps.
+
+Use dropdowns, checkboxes, autocomplete, and suggested values wherever practical. Allow optional custom text without requiring excessive typing.
+
+A user must only be able to create, edit, or delete their own posts, subject to the configured posting and moderation rules.
+
+---
+
+## 10. POST APPROVAL AND MODERATION
+
+Posts created by Students and Teachers must be pending until Admin approval, unless the Admin has explicitly configured a different safe workflow.
+
+Possible statuses:
+
+- Draft.
+- Pending review.
+- Approved.
+- Rejected.
+- Changes requested.
+- Paused.
+- Expired.
+- Removed.
+
+The Admin must be able to:
+
+- Review a post.
+- See relevant form data and the post owner.
+- Approve it.
+- Reject it with a reason.
+- Request corrections.
+- Pause or remove it.
+- View relevant history.
+
+Only approved and active posts should appear in public search results.
+
+Notify the owner when their post is approved, rejected, or returned for changes.
+
+Store the moderation decision, reason, reviewer, and timestamp in an appropriate audit record.
+
+Do not allow frontend code to change a post's status from pending to approved without authorized server-side validation.
+
+---
+
+## 11. TEACHER SEARCH AND MATCHING
+
+Build an effective teacher-finding experience.
+
+Students and Guardians should be able to search for Teachers using:
+
+- Division.
+- District.
+- Thana/Upazila.
+- Area, where appropriate.
+- Class.
+- Subject.
+- Curriculum/medium.
+- Budget or fee range.
+- Teaching experience.
+- Online or in-person availability.
+- Schedule.
+- Rating.
+- Verification status.
+
+Provide sorting options such as:
+
+- Best match.
+- Highest rating.
+- Most experienced.
+- Lowest fee.
+- Recently active, if this data is reliably available.
+
+Show a clear Teacher card containing relevant public information, subjects, qualifications, experience, location summary, fee range, rating, review count, and verification status.
+
+Provide a detailed Teacher profile page.
+
+The search algorithm should prioritize relevant matches rather than relying only on ratings. Avoid unfairly ranking new Teachers lower solely because they have fewer reviews.
+
+Also allow Teachers to discover approved Student tuition posts matching their subjects, location, schedule, and fee preferences.
+
+Do not expose Student private phone numbers or unnecessarily detailed personal information during search.
+
+---
+
+## 12. PRIVATE MESSAGING SYSTEM
+
+Implement an in-platform private messenger between authorized Students and Teachers.
+
+Features:
+
+- Conversation list.
+- Message history.
+- Message timestamps.
+- Read/unread status where feasible.
+- Text messages.
+- Relevant booking and offer references.
+- Secure conversation access.
+- Report and block functionality.
+- Conversation status.
+- Mobile-friendly messaging layout.
+
+Only authorized conversation participants may read or send messages.
+
+Messages must not be publicly accessible through ordinary post or profile queries.
+
+Use a proper database authorization policy for conversations, participants, and messages. Never trust a conversation ID alone as authorization.
+
+### Contact information privacy
+
+Hide private phone numbers and contact details until the configured conditions have been satisfied.
+
+Use database-level access restrictions or appropriately authorized backend functions. Merely hiding a phone number in the interface is not sufficient.
+
+The Admin must be able to configure the conditions that unlock contact information.
+
+The default workflow should require both parties to agree to the terms and the Admin to confirm the booking. If commission payment verification is configured as a prerequisite for releasing contact details, enforce that prerequisite on the backend.
+
+Apply reasonable anti-abuse controls to messages and report suspicious attempts to bypass the platform. Explain that automated detection cannot guarantee that every attempt to share external contact details will be blocked.
+
+Do not secretly expose private messages to ordinary users. Admin access for moderation or dispute resolution must be restricted, justified, and audited.
+
+---
+
+## 13. PRICE NEGOTIATION AND OFFERS
+
+Allow Students and Teachers to negotiate tuition fees inside the platform.
+
+Required actions:
+
+- Make an initial offer.
+- Counter-offer.
+- Accept an offer.
+- Reject an offer.
+- Withdraw an offer where appropriate.
+- View offer history.
+- Display the current agreed amount.
+- Record any mutually accepted schedule or other key terms.
+- Start a booking request based on mutually accepted terms.
+
+Every offer should record:
+
+- Conversation or booking reference.
+- Offer amount.
+- Currency.
+- Sender.
+- Recipient.
+- Offer status.
+- Creation timestamp.
+- Relevant terms.
+
+An accepted offer must not automatically grant Admin approval.
+
+Both parties must explicitly agree to the final terms before the booking can be submitted for final Admin review.
+
+Prevent contradictory updates, stale offers, and duplicate booking creation.
+
+---
+
+## 14. BOOKING WORKFLOW AND ADMIN FINAL CONFIRMATION
+
+Implement a clear, auditable booking lifecycle.
+
+Recommended stages:
+
+1. Student and Teacher discover each other.
+2. They start an authorized private conversation.
+3. They negotiate price and tuition terms.
+4. One party submits a proposed agreement.
+5. The other party accepts the exact terms.
+6. The system records both parties' consent.
+7. A booking approval request is submitted to Admin.
+8. The parties provide any required supporting information or evidence.
+9. Admin reviews the request.
+10. Admin approves or rejects the booking with a reason.
+11. Once approved, the booking becomes confirmed according to the configured payment and contact-release policy.
+12. The system records the commission calculation and required payment status.
+13. The parties receive notifications.
+14. The booking can later be completed, cancelled, or disputed.
+
+Suggested booking statuses:
+
+- Draft.
+- Negotiating.
+- Awaiting other party.
+- Awaiting Admin approval.
+- Awaiting commission payment, if required.
+- Confirmed.
+- In progress.
+- Completed.
+- Cancellation requested.
+- Cancelled.
+- Disputed.
+- Refunded, where applicable.
+
+Display each booking's status clearly to both parties.
+
+Admin confirmation must be a real protected operation. Do not allow a Student, Teacher, or unauthenticated visitor to confirm a booking by editing client state or sending an unauthorized request.
+
+When Admin confirms a booking, store an immutable record of the approved terms, agreed fee, commission rules applied, and relevant timestamps.
+
+---
+
+## 15. COMMISSION MANAGEMENT — CORE BUSINESS LOGIC
+
+Build a flexible commission engine controlled by Admin settings.
+
+### A. Commission applies to every new tuition
+
+The normal rule is that every genuinely new tuition booking receives its own commission calculation.
+
+Do not charge a monthly recurring commission by default unless Admin explicitly enables that policy.
+
+If a Teacher obtains a new tuition through a separate new booking, evaluate that booking under the applicable commission rules.
+
+Do not accidentally charge the same booking multiple times because of repeated button clicks, page refreshes, retries, or duplicate requests.
+
+### B. Separate Student and Teacher commission
+
+Admin must be able to set Student and Teacher commissions independently.
+
+Examples:
+
+- Student commission: 5%.
+- Teacher commission: 8%.
+- Student commission: 0%.
+- Teacher commission: 10%.
+- Both sides free under a promotional rule.
+
+These are examples only, not hard-coded rates.
+
+Provide reasonable configurable commission types, including percentage-based and, if appropriate, fixed-fee commissions.
+
+Validate rate ranges, currency amounts, rounding, and applicable minimum/maximum values.
+
+The Admin must be able to configure whether commission is charged to the Student, the Teacher, or both.
+
+Where both are charged, calculate each side separately from the correct agreed fee and applicable commission base. Display a clear breakdown.
+
+### C. Default rules and customization
+
+Provide:
+
+- Default commission rules.
+- Effective dates, if needed.
+- Rules for new bookings.
+- Optional booking-specific overrides.
+- Optional promotional or free-booking rules.
+- Separate Student and Teacher rates.
+- Commission previews.
+- Rule history.
+- The ability for Admin to disable or revise a rule.
+
+The ordinary workflow must work without the Admin needing to use AI.
+
+### D. Immutable commission snapshot
+
+At the appropriate final booking-confirmation stage, calculate the commission using the rule applicable to that booking and save a snapshot.
+
+Store:
+
+- Booking ID.
+- Agreed tuition fee.
+- Commission base.
+- Student commission rate and amount.
+- Teacher commission rate and amount.
+- Rule/version used.
+- Payment responsibility.
+- Waiver, if applicable.
+- Calculation timestamp.
+- Final payable amounts.
+
+Existing bookings must not silently inherit new commission rates when the Admin edits the default rules.
+
+If Admin wants to change an existing booking, require a clearly labeled privileged action, an appropriate reason, a recalculation preview, explicit confirmation, and an audit log.
+
+Do not change already-settled financial records silently.
+
+### E. Commission payment tracking
+
+A commission calculation does not prove that money was received.
+
+Track payment states separately, such as:
+
+- Not yet due.
+- Due.
+- Payment submitted.
+- Under verification.
+- Paid and verified.
+- Failed.
+- Cancelled.
+- Refunded.
+- Waived.
+
+Support payment references and applicable evidence securely.
+
+Prevent unauthorized changes to paid/verified status.
+
+---
+
+## 16. CANCELLATION, PROOF VERIFICATION, AND ONE FREE REPLACEMENT TUITION
+
+This is an essential business requirement.
+
+The platform must support an Admin-controlled policy under which an eligible cancelled tuition can provide a one-time commission waiver for a replacement/new tuition.
+
+### Intended default policy
+
+If a booking was confirmed, the relevant commission was already paid or financially settled, and the tuition is subsequently cancelled under an eligible circumstance, the affected party must not automatically have to pay the same kind of commission again for one approved replacement tuition.
+
+Instead, the system can grant a one-time replacement commission-waiver credit, subject to Admin review and approval.
+
+**This benefit must not be automatic. The Admin must review the relevant proof first and explicitly approve it.**
+
+### Cancellation process
+
+1. A Student or Teacher submits a cancellation request.
+2. They provide the reason and the relevant evidence where required.
+3. The other party may be asked for a response or supporting evidence.
+4. Admin reviews the request, booking record, payment record, and supporting information.
+5. Admin approves or rejects the cancellation request.
+6. Admin decides whether a refund, financial adjustment, or replacement waiver is appropriate under the configured policy.
+7. The system records the decision and reason.
+8. If eligible and approved, a replacement commission-waiver credit is granted.
+9. When an eligible replacement booking is confirmed, the system applies that credit instead of charging the applicable commission covered by the waiver.
+10. The system marks that credit as used so it cannot be reused.
+
+### Waiver controls
+
+Provide configurable settings for:
+
+- Whether the replacement-waiver policy is enabled.
+- Which cancellation reasons qualify.
+- Whether the waiver applies to the Student, Teacher, or both.
+- The number of replacement credits permitted per eligible cancelled booking.
+- Credit expiration, if applicable.
+- Whether the waiver covers the full applicable commission or a configured amount.
+- Which replacement bookings are eligible.
+- Required evidence.
+- Whether additional review or escalation is required.
+
+Use a sensible default of one replacement commission waiver for one eligible, Admin-approved cancellation.
+
+A replacement waiver should apply only to its intended future booking and only to the party or parties covered by the Admin decision.
+
+### Prevent abuse
+
+- Require Admin approval.
+- Keep a full decision history.
+- Prevent duplicate credits for the same cancellation.
+- Prevent a credit from being redeemed more than once.
+- Prevent users from self-assigning or modifying waiver eligibility.
+- Flag repeated or suspicious cancellation patterns.
+- Use atomic database transactions or equivalent server-side safeguards when applying a credit.
+
+Do not make refunds automatic merely because a cancellation was requested. Admin must make the applicable refund or adjustment decision and record it.
+
+If commission is still unpaid when an eligible booking is cancelled, apply the configured cancellation policy to void or adjust the outstanding amount appropriately instead of incorrectly recording money as received.
+
+Make the difference clear between a cancellation, a refund, a commission waiver, and a replacement booking. These are separate financial events.
+
+---
+
+## 17. PAYMENT METHODS AND ADMIN PAYMENT VERIFICATION
+
+Support an Admin-configurable payment workflow.
+
+The initial version should be able to work with manual verification, without requiring a paid payment gateway.
+
+Admin should be able to configure the payment destinations or methods accepted by the platform, such as:
+
+- bKash.
+- Nagad.
+- Bank transfer.
+- Another configured method.
+
+Do not hard-code live payment account details. Store configuration securely and make it editable by authorized Admin users.
+
+The payment submission process may collect:
+
+- Applicable booking or invoice reference.
+- Payer identity from the authenticated account.
+- Expected amount.
+- Selected configured payment method.
+- Transaction reference.
+- Optional receipt/screenshot.
+- Submission timestamp.
+
+Admin can review and approve or reject the submitted payment evidence.
+
+Store the reviewer, decision, reason, amount, and timestamps.
+
+Validate uploaded evidence files and protect them from public access where appropriate.
+
+Do not treat a screenshot alone as guaranteed proof of payment. Where possible, verify the payment through the relevant provider or transaction reference.
+
+If a real payment gateway is implemented later, use the provider's documented integration and secure server-side verification or webhooks. Never mark a payment as paid solely because the browser redirects to a success page.
+
+Never collect or store users' payment card secrets.
+
+Keep the payment interface modular so future gateways can be added without rewriting the booking system.
+
+Document provider accounts, credentials, test modes, webhook setup, fees, and required configuration. Never claim a payment provider is integrated or verified unless it actually is.
+
+---
+
+## 18. TEACHER RATINGS AND REVIEWS
+
+Implement a trustworthy review system.
+
+Students should be able to rate a Teacher after an eligible tuition has been completed.
+
+Features:
+
+- Rating from 1 to 5 stars.
+- Optional written review.
+- Review creation date.
+- Teacher average rating.
+- Total review count.
+- Completed tuition count.
+- Admin moderation of abusive, fraudulent, or policy-violating reviews.
+- Appropriate review reporting.
+- Clear handling of edited or removed reviews.
+
+Only an eligible Student associated with a verified completed booking may submit a review for that booking.
+
+Prevent duplicate reviews for the same booking unless an explicitly configured correction/edit workflow applies.
+
+Do not allow users to generate reviews for their own account or their own Teacher profile.
+
+Do not treat a cancelled booking as a completed tuition review.
+
+Calculate aggregate ratings accurately. Avoid misleading ratings when there are no reviews.
+
+Admin must be able to inspect relevant review reports and moderate reviews with an audit record. Do not silently remove legitimate critical reviews merely because they are negative.
+
+---
+
+## 19. ADMIN DASHBOARD
+
+Build a comprehensive, protected Admin dashboard.
+
+### Dashboard overview
+
+Display useful, database-backed statistics such as:
+
+- Total Students.
+- Total Teachers.
+- Pending and approved posts.
+- Pending booking approvals.
+- Confirmed and completed bookings.
+- Cancellation requests.
+- Disputes and complaints.
+- Commission due.
+- Commission paid and verified.
+- Refunds and waivers.
+- Pending payment evidence.
+- Verification requests.
+
+Do not fabricate production statistics.
+
+### User management
+
+Admin must be able to:
+
+- Search and review users.
+- View authorized profile information.
+- Review verification documents as permitted.
+- Suspend or reactivate accounts.
+- Handle reports.
+- Review relevant booking history.
+- Apply moderation actions with reasons.
+
+Use least-privilege access and protect unnecessary sensitive personal data.
+
+### Post management
+
+Admin can:
+
+- Review pending Student and Teacher posts.
+- Approve, reject, pause, or remove posts.
+- Request changes.
+- Search posts and view their history.
+- Identify duplicate or suspicious posts.
+
+### Booking management
+
+Admin can:
+
+- Review consent from both parties.
+- Inspect the final negotiated terms.
+- Review required evidence.
+- Approve or reject booking requests.
+- View commission snapshots and payment states.
+- Review cancellation requests.
+- Grant replacement commission-waiver credits when authorized.
+- Review disputes and related audit history.
+
+### Commission configuration
+
+Admin can:
+
+- Set default Student and Teacher commission rates.
+- Change one side independently.
+- Set one side to zero when allowed.
+- Enable or disable commission rules.
+- Set rules for new bookings.
+- Configure eligible promotional or waiver rules.
+- Preview how rules affect a representative booking.
+- Review rule versions and change history.
+- Decide whether an exceptional existing-booking adjustment is permitted.
+
+Make the interface explicit about which bookings will and will not be affected by a rule change.
+
+### Payment and settlement management
+
+Admin can review payment submissions, transaction references, receipts, commission records, refunds, waivers, and settlement history.
+
+Provide clear financial totals and filters by date, booking, user, status, and payment method.
+
+Do not confuse money requested, money submitted, money verified, money refunded, or money settled.
+
+### System configuration
+
+Provide protected settings for:
+
+- Site name and branding.
+- Supported languages.
+- Allowed payment methods.
+- Contact visibility policy.
+- Posting and moderation settings.
+- Commission defaults.
+- Cancellation and replacement-waiver policy.
+- Review rules.
+- Notifications.
+- AI assistant configuration.
+
+Only authorized administrators may change these settings.
+
+---
+
+## 20. ADMIN AI AGENT — REQUIRED IN THE INITIAL PRODUCT
+
+Build an AI-powered assistant inside the Admin dashboard.
+
+The AI is an assistant for authorized administrative operations, not an unrestricted owner of the application.
+
+Example prompt from Admin:
+
+"Set the Student commission to 5% and the Teacher commission to 8% for new bookings created during the next seven days. Do not modify existing bookings."
+
+Other examples:
+
+- "Show all booking requests awaiting confirmation."
+- "Summarize this week's cancellation requests."
+- "Show payment submissions awaiting verification."
+- "Preview the commission changes for new bookings next week."
+- "Show teachers with verification requests."
+- "Summarize unresolved complaints."
+- "Find approved bookings whose commission is still unpaid."
+
+### AI capabilities
+
+The assistant should:
+
+1. Interpret the natural-language request.
+2. Identify the requested entities, date range, scope, and desired action.
+3. Check whether the Admin is authorized for that action.
+4. Ask for clarification or return a safe validation error if the instruction is ambiguous or contradictory.
+5. Retrieve only data permitted for the current Admin.
+6. Prepare a structured proposed action.
+7. Display a human-readable preview.
+8. Clearly identify which records or future bookings will be affected.
+9. Show before-and-after values for relevant settings.
+10. Require the Admin to explicitly confirm any consequential change.
+11. Execute the action through an authorized, validated server-side operation.
+12. Report the actual result.
+13. Write an audit record.
+
+### Critical confirmation workflow
+
+Never execute consequential AI-generated changes immediately after interpreting a natural-language prompt.
+
+Use this pattern:
+
+Admin instruction → AI interpretation → scope and validation → preview → explicit Admin confirmation → authorized backend action → result and audit log.
+
+If a request says "new bookings only", preserve existing booking snapshots.
+
+Use explicit date boundaries and the Asia/Dhaka timezone for time-dependent requests.
+
+When the AI cannot determine the intended scope, it must not guess and execute a financial change.
+
+### Secure tool/action architecture
+
+Do not allow the AI to run arbitrary SQL, access secret environment variables, execute arbitrary code, or bypass authorization.
+
+Define a limited set of server-side actions, such as:
+
+- Preview commission-rule changes.
+- Apply approved commission-rule changes.
+- List pending bookings.
+- Retrieve permitted booking summaries.
+- List cancellation requests.
+- Preview approved cancellation decisions.
+- Grant a replacement credit after explicit authorized approval.
+- Retrieve payment-verification queues.
+- Generate reports from authorized data.
+
+Validate every argument on the server.
+
+Enforce role checks, allowed action types, date ranges, record ownership, transaction consistency, and all applicable business rules.
+
+The AI must not directly fabricate payment status, verification status, reviews, booking consent, or Admin approval.
+
+Sensitive or destructive operations require explicit confirmation and the appropriate permissions even if the natural-language prompt sounds confident.
+
+### AI change log
+
+For each consequential AI-assisted operation, record:
+
+- Admin account.
+- Original instruction.
+- Structured proposed action.
+- Relevant preview or scope.
+- Confirmation time.
+- Authorized action executed.
+- Result.
+- Timestamp.
+- Failure reason, if any.
+
+Do not store unnecessary personal information or secret credentials in the AI log.
+
+### AI provider and cost
+
+Use a configurable AI provider through a secure server-side API. Never expose an AI API key in frontend source code or browser network responses.
+
+If credentials are not available, implement the full UI and integration interface, document the environment variables and setup instructions, and show a clear unavailable/configuration-required state. Do not fake live AI responses.
+
+The platform's ordinary Admin dashboard must continue to work if the AI service is not configured or becomes unavailable.
+
+---
+
+## 21. NOTIFICATIONS
+
+Implement in-app notifications for important events:
+
+- Account registration or verification.
+- Post submitted, approved, rejected, or returned for changes.
+- New message.
+- New offer or counter-offer.
+- Offer accepted or rejected.
+- Booking submitted for Admin approval.
+- Booking approved or rejected.
+- Commission due or payment status changed.
+- Cancellation requested or decided.
+- Replacement waiver granted or used.
+- Review received.
+- Complaint updated.
+
+Notifications should link to the relevant authorized page.
+
+Read/unread status should be stored correctly.
+
+Email notifications may be added where a properly configured provider is available. Do not assume that email, SMS, or push notification credentials exist. Document any external service requirements and possible costs.
+
+---
+
+## 22. COMPLAINTS, REPORTING, AND DISPUTES
+
+Add a reporting system for:
+
+- Inappropriate messages.
+- Fake profiles.
+- Suspicious tuition posts.
+- Misleading qualifications.
+- Payment disputes.
+- Booking cancellations.
+- Harassment or abuse.
+- Fake or abusive reviews.
+
+Allow authorized users to submit reports with a category, explanation, and relevant references.
+
+Admin should be able to review, prioritize, investigate, resolve, or escalate cases.
+
+Record decisions and timestamps.
+
+Restrict evidence access to authorized users. Do not expose complaints or payment evidence publicly.
+
+Create appropriate safeguards against spam, repeated submissions, and unauthorized access.
+
+---
+
+## 23. DATABASE ARCHITECTURE
+
+Use PostgreSQL through Supabase unless the existing project already has a compatible, secure database architecture.
+
+Design normalized tables and relationships. Avoid storing all application data in one large profile table.
+
+The schema should cover the following concepts, using appropriate table names and relationships:
+
+- Profiles and trusted role assignments.
+- Student-specific profile details.
+- Teacher-specific profile details.
+- Private contact information.
+- Location data or validated location references.
+- Subjects and education levels.
+- Tuition posts.
+- Post subjects and relevant preferences.
+- Conversations.
+- Conversation participants.
+- Messages.
+- Offers and counter-offers.
+- Bookings.
+- Booking terms and consent records.
+- Booking status history.
+- Commission rules and rule versions.
+- Booking commission snapshots.
+- Payments and payment evidence.
+- Cancellation requests.
+- Refunds or adjustments.
+- Replacement commission-waiver credits.
+- Reviews.
+- Complaints and reports.
+- Notifications.
+- Admin audit logs.
+- Protected application settings.
+
+Add suitable foreign keys, constraints, indexes, timestamps, and deletion policies.
+
+Use reliable identifiers and avoid using mutable user-entered strings as database primary keys.
+
+Protect financial history and audit records from unsafe deletion or modification.
+
+### Important data separation
+
+A saved Student or Teacher profile is different from an individual post.
+
+A booking snapshot is different from the current profile and different from current commission settings.
+
+A commission record is different from a payment record.
+
+A cancellation is different from a refund.
+
+A replacement-waiver credit is different from a paid commission.
+
+Represent these concepts explicitly in the schema.
+
+Use appropriate unique constraints to prevent duplicate booking processing, duplicate reviews, and duplicate waiver redemption.
+
+---
+
+## 24. ROW-LEVEL SECURITY AND BACKEND AUTHORIZATION
+
+Enable and carefully configure PostgreSQL Row-Level Security for tables exposed through Supabase's client-accessible APIs.
+
+Provide tested policies for each table.
+
+Examples of the intended permissions:
+
+- A user can access and edit their own permitted profile fields.
+- A user cannot alter their own trusted role or assign themselves Admin.
+- Public users can access only approved, public post data.
+- Private phone numbers are not exposed through public post or profile queries.
+- Only conversation participants can access their conversations and messages.
+- Only authorized participants can create valid offers within their conversations.
+- Only authorized users can view and act on their bookings.
+- Only an authorized backend process or Admin can approve posts, finalize bookings, verify payments, grant waivers, or change commission rules.
+- Only eligible Students can submit reviews for completed bookings.
+- Only authorized Admins can inspect protected moderation, payment, and administrative records.
+
+Do not use permissive policies that allow an authenticated user to modify their own role field, approval status, commission amount, payment status, or booking confirmation status.
+
+For trusted role assignments, administrative actions, commission calculation, and other privileged changes, use carefully secured server-side functions or equivalent backend mechanisms.
+
+Validate request parameters and enforce authorization on every sensitive operation.
+
+Never rely exclusively on client-side checks.
+
+### Secrets
+
+- Never expose Supabase service-role keys in frontend code.
+- Never expose payment secrets or AI API keys in frontend code.
+- Store secrets in appropriate server-side environment variables.
+- Use the minimum permissions required.
+- Document which variables are public and which must remain secret.
+- Use safe deployment practices for Netlify environment variables or supported server-side functions.
+
+If Supabase Edge Functions or Netlify Functions are used, make their authorization requirements explicit.
+
+---
+
+## 25. SERVER-SIDE BUSINESS OPERATIONS
+
+Implement the important business operations as validated and appropriately authorized server-side procedures or functions.
+
+At minimum, provide operations for:
+
+- Creating and updating profiles.
+- Submitting posts for moderation.
+- Approving and rejecting posts.
+- Creating conversations.
+- Creating and responding to offers.
+- Recording both parties' agreement to booking terms.
+- Submitting a booking for Admin review.
+- Approving or rejecting bookings.
+- Calculating commission.
+- Creating immutable commission snapshots.
+- Submitting payment evidence.
+- Verifying or rejecting a payment.
+- Requesting and deciding cancellations.
+- Issuing eligible replacement credits.
+- Redeeming replacement credits.
+- Completing bookings.
+- Creating eligible reviews.
+- Changing commission rules.
+- Applying AI-assisted Admin changes.
+
+Use atomic transactions or equivalent safeguards for operations that could otherwise create partial or duplicate financial records.
+
+For example, booking finalization, commission snapshot creation, and replacement-credit redemption should not be vulnerable to duplicate execution caused by retries or simultaneous requests.
+
+Return meaningful success and error responses.
+
+Do not allow untrusted clients to submit a commission amount and have the server blindly accept it. Calculate applicable amounts from trusted booking terms and the saved rule snapshot.
+
+---
+
+## 26. SEARCH, PAGINATION, AND PERFORMANCE
+
+Make search practical and efficient.
+
+- Add database indexes for commonly filtered columns.
+- Use server-side filtering for large datasets.
+- Use pagination or incremental loading.
+- Avoid loading every user, message, or post into the browser.
+- Use appropriate caching for non-sensitive public content.
+- Avoid caching protected information in public caches.
+- Avoid unnecessary repeated database calls.
+- Handle slow networks and failed requests gracefully.
+
+Do not make performance claims that have not been measured.
+
+---
+
+## 27. FILE STORAGE AND PRIVACY
+
+Use Supabase Storage or another appropriate object-storage system for photos and evidence.
+
+Separate public profile images from private files such as identity documents and payment receipts.
+
+Apply file-size limits, allowed MIME types, safe filenames, authorization, and suitable storage policies.
+
+Do not trust file extensions alone.
+
+Avoid storing payment receipts or identity documents in publicly readable buckets.
+
+Do not return private storage URLs or credentials to unauthorized users.
+
+Provide an account-data and privacy process that is appropriate to the applicable product requirements. Explain the implications of account deletion for active bookings and financial records instead of automatically deleting necessary records without considering the consequences.
+
+---
+
+## 28. ADMIN AUDIT AND FINANCIAL TRANSPARENCY
+
+Important administrative and financial actions must be auditable.
+
+Record relevant information for:
+
+- Role and permission changes.
+- Post approval decisions.
+- Booking approvals and rejections.
+- Commission rule changes.
+- Existing-booking adjustments.
+- Payment verification.
+- Refund decisions.
+- Cancellation decisions.
+- Replacement waiver creation and redemption.
+- Teacher verification changes.
+- Review moderation.
+- AI-assisted privileged actions.
+
+Record the acting account, action type, affected record, timestamp, and a suitable reason or summary.
+
+Avoid storing passwords, API keys, or unnecessary sensitive information in audit logs.
+
+Display understandable commission breakdowns to the relevant parties.
+
+Clearly distinguish between estimated commission, commission payable, commission paid, commission waived, refund pending, refund completed, and any outstanding balance.
+
+Do not claim that money has moved merely because a database record says a payment was submitted.
+
+---
+
+## 29. TESTING REQUIREMENTS
+
+Create automated tests where practical and manually verify all critical user journeys.
+
+At minimum, test the following:
+
+### Authentication and roles
+
+- Student registration and login.
+- Teacher registration and login.
+- Password-reset workflow.
+- Secure logout.
+- Unauthorized users cannot access protected pages.
+- Ordinary users cannot grant themselves Admin.
+- Suspended accounts cannot perform restricted actions.
+
+### Profiles and posts
+
+- Save and reload a Student profile.
+- Save and reload a Teacher profile.
+- Edit a profile.
+- Create a "For Myself" post with profile auto-fill.
+- Edit the post without changing the saved profile.
+- Create a "For Someone Else" post without modifying the account owner's profile.
+- Verify that posts remain unchanged when profile data changes unless explicitly edited.
+- Verify that pending posts are not publicly visible.
+- Verify that rejected posts are handled correctly.
+
+### Search and matching
+
+- Filter by location, subject, class, budget, medium, and teaching mode.
+- Verify that unapproved posts do not appear in public search.
+- Verify that private contact details are never exposed through public search results.
+
+### Chat and offers
+
+- Verify conversation participant access.
+- Verify that unrelated users cannot read messages.
+- Create an offer and counter-offer.
+- Accept and reject offers.
+- Verify that offer acceptance alone does not bypass Admin booking approval.
+- Verify that contact information remains protected until the configured release conditions are met.
+
+### Booking and commission
+
+- Confirm that both parties must agree to the final terms.
+- Confirm that Admin approval is required.
+- Check Student and Teacher commission calculations independently.
+- Test zero-percent commission.
+- Test changed commission settings.
+- Confirm that new rates do not silently modify existing snapshots.
+- Confirm that duplicate requests cannot charge the same commission twice.
+- Verify that payment submission and payment verification remain separate states.
+
+### Cancellation and replacement waiver
+
+- Test cancellation before final confirmation.
+- Test cancellation after booking confirmation.
+- Test cancellation with and without evidence.
+- Confirm that the Admin must approve a qualifying replacement waiver.
+- Confirm that one credit cannot be used twice.
+- Confirm that an ineligible cancellation does not automatically grant a waiver.
+- Confirm that the next eligible booking receives the appropriate one-time waiver.
+- Confirm that cancellation, refund, waiver, and payment records remain consistent.
+
+### Rating and review
+
+- Only eligible Students can review a completed booking.
+- A user cannot review their own account.
+- A cancelled booking cannot be reviewed as completed.
+- Duplicate reviews are prevented.
+- Ratings are calculated accurately.
+
+### Admin AI
+
+- The AI can prepare a preview without executing the change.
+- The Admin must explicitly confirm consequential actions.
+- AI cannot bypass authorization or directly write arbitrary SQL.
+- A request for new bookings only cannot alter existing bookings.
+- Ambiguous instructions cannot result in unreviewed financial changes.
+- All executed changes create audit records.
+- The system behaves safely when the AI provider is unavailable.
+
+### Security and deployment
+
+- Test database permissions using different roles.
+- Verify that secrets are absent from the browser bundle.
+- Verify protected storage access.
+- Verify input validation and error handling.
+- Test the production build.
+- Test client-side routing after refreshing a nested page.
+- Test the deployed website and essential workflows.
+
+Do not claim tests have passed unless they were actually executed. Report any tests that remain blocked by missing credentials or external service configuration.
+
+---
+
+## 30. NETLIFY, GITHUB, AND DEPLOYMENT
+
+Prepare the project for GitHub and Netlify.
+
+Required deliverables:
+
+- Organized project source code.
+- Appropriate dependency and build configuration.
+- Correct production build command.
+- Correct publish directory.
+- Client-side routing fallback rules where needed.
+- A safe `.gitignore`.
+- Environment-variable documentation.
+- Netlify configuration if required.
+- Database migration files or SQL setup scripts.
+- Secure Supabase configuration instructions.
+- AI provider configuration instructions.
+- Storage bucket and access-policy instructions.
+- Admin bootstrap instructions.
+- Production build and deployment instructions.
+- A README written for a beginner.
+
+Never commit `.env` files containing secrets, service-role keys, private API keys, or payment credentials.
+
+Provide an example environment file containing placeholder names only.
+
+Clearly document:
+
+1. How to run the project locally.
+2. How to connect Supabase.
+3. How to apply database migrations.
+4. How to configure authentication providers and redirect URLs.
+5. How to configure storage and security policies.
+6. How to configure AI provider credentials.
+7. How to create the initial trusted Admin.
+8. How to push the project to GitHub.
+9. How to connect GitHub to Netlify.
+10. How to configure production environment variables.
+11. How to deploy and update the application.
+12. How to troubleshoot common errors.
+
+Use a free-first architecture where possible. Explain what may require a paid plan, a custom domain, an external account, API usage, or provider approval. Do not claim any third-party account or integration is already configured unless it has been verified.
+
+---
+
+## 31. FREE-FIRST IMPLEMENTATION STRATEGY
+
+Prioritize free or low-cost options for development and initial deployment.
+
+Avoid adding paid external services that are not necessary for the first usable version.
+
+The core product should be functional even if optional email, SMS, AI, or payment-provider credentials are not yet configured.
+
+However, do not replace real functionality with fake success messages.
+
+For example:
+
+- If Google sign-in is not configured, show the required setup instructions.
+- If AI credentials are missing, show that the Admin AI service needs configuration.
+- If a payment gateway is not configured, use the implemented manual payment-review workflow.
+- If live email notifications are unavailable, ensure in-app notifications still work.
+- If optional integration setup is incomplete, document what is needed and which features remain unavailable.
+
+Avoid unnecessary infrastructure that makes a beginner's deployment difficult.
+
+Design the application so additional real integrations can be added later without rewriting the core booking and financial logic.
+
+---
+
+## 32. IMPLEMENTATION PHASES
+
+Work in the following sequence.
+
+### Phase 1 — Audit and foundation
+
+- Inspect the existing project.
+- Identify missing requirements.
+- Preserve working functionality.
+- Establish the application architecture.
+- Implement shared layout, routing, UI components, and configuration.
+- Prepare the database design.
+
+### Phase 2 — Authentication, authorization, and profiles
+
+- Configure Supabase Auth.
+- Implement safe role handling.
+- Build Student and Teacher profiles.
+- Implement profile updates and photo storage.
+- Implement location selectors.
+- Ensure proper database policies.
+
+### Phase 3 — Posts and approval
+
+- Create Student tuition requirement posts.
+- Create Teacher availability posts.
+- Implement "For Myself" and "For Someone Else".
+- Implement profile auto-fill without profile mutation.
+- Implement Admin post approval.
+
+### Phase 4 — Discovery and messaging
+
+- Build Teacher search and filtering.
+- Build Teacher public profile pages.
+- Enable relevant Teachers to discover tuition requests.
+- Implement private conversations.
+- Implement offers and counter-offers.
+- Protect contact information.
+
+### Phase 5 — Booking and commission
+
+- Implement mutual agreement and booking requests.
+- Implement the Admin final-confirmation workflow.
+- Implement configurable Student and Teacher commissions.
+- Store commission snapshots.
+- Implement payment evidence submission and Admin verification.
+
+### Phase 6 — Cancellation, replacement credits, and reviews
+
+- Implement cancellation requests.
+- Implement evidence and Admin review.
+- Implement refund/adjustment records where needed.
+- Implement approved one-time replacement commission waivers.
+- Implement completed-tuition reviews and aggregate ratings.
+
+### Phase 7 — Admin dashboard and AI
+
+- Build complete Admin management tools.
+- Implement reports and audit history.
+- Build the AI assistant interface.
+- Implement secure AI action previews.
+- Add explicit confirmation and authorized backend operations.
+- Test the AI safety boundaries.
+
+### Phase 8 — Testing and deployment
+
+- Run database and application tests.
+- Fix identified defects.
+- Build the production application.
+- Verify routing and production configuration.
+- Prepare the README and deployment guide.
+- Deploy if access and credentials are available.
+- Report the actual deployment result and unresolved configuration tasks.
+
+Do not skip database authorization in order to finish the interface quickly.
+
+---
+
+## 33. REQUIRED DELIVERABLES
+
+The finished project should include:
+
+1. A functioning responsive website.
+2. Student dashboard and profile management.
+3. Teacher dashboard and profile management.
+4. Admin dashboard.
+5. Authentication and password recovery.
+6. Role-based authorization.
+7. Post creation, editing, and moderation.
+8. Search, filters, and matching.
+9. Private chat and price negotiation.
+10. Booking request and Admin confirmation.
+11. Configurable commission management.
+12. Payment evidence and verification workflow.
+13. Cancellation and replacement commission-waiver workflow.
+14. Teacher rating and review system.
+15. Complaints and moderation.
+16. In-app notifications.
+17. Admin AI assistant with preview and explicit confirmation.
+18. Database schema, migrations, and secure policies.
+19. Tests for critical workflows.
+20. Example environment configuration without secrets.
+21. A complete beginner-friendly README.
+22. GitHub and Netlify deployment instructions.
+23. A final implementation report showing what works and what still needs external setup.
+
+---
+
+## 34. FINAL RULES FOR THE AI CODING AGENT
+
+Follow these rules throughout implementation:
+
+- Do not build only a visual mockup.
+- Do not use local storage as the primary database for real accounts, bookings, payments, or commissions.
+- Do not expose private user information.
+- Do not allow users to grant themselves Admin.
+- Do not trust frontend values for commission calculations or payment status.
+- Do not let an AI instruction bypass Admin authorization or explicit confirmation.
+- Do not silently change existing booking terms or financial records.
+- Do not grant a replacement waiver without the required Admin decision.
+- Do not allow the same waiver or financial action to execute twice.
+- Do not falsely claim successful payment, email delivery, AI execution, testing, or deployment.
+- Do not overwrite the existing project unnecessarily.
+- Do not leave core features as non-functional buttons.
+- Do not hard-code secrets or real payment account credentials.
+- Do not stop after making a checklist; implement the features in practical phases.
+- Do not skip security because a free-tier architecture is being used.
+- If a required external credential is unavailable, implement the safe integration boundary, explain the exact configuration needed, and continue with the remaining work.
+
+At the end of each phase, summarize the files and features changed, tests performed, and remaining issues. Continue automatically to the next phase when the project environment allows it.
+
+When implementation is complete, provide a concise final report covering:
+
+- Features actually implemented.
+- Database and security setup completed.
+- Tests actually executed and their results.
+- Integrations that require credentials.
+- Known limitations.
+- Exact local run instructions.
+- Exact GitHub and Netlify deployment steps.
+- Any expected costs or service limits that the developer needs to verify.
+
+**The goal is a secure, maintainable, production-oriented tuition marketplace that can start with free or low-cost services and grow gradually without compromising its financial records, user privacy, or booking integrity.**
